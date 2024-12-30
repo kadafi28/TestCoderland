@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    restart: always
+    container_name: dbPostgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: json123
+      POSTGRES_DB: jsonBackendDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: JsonBackend/Dockerfile
+    container_name: jsonBackend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=db;Database=jsonBackendDB;Username=postgres;Password=json123"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data: {}
